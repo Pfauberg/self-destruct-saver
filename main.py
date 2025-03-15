@@ -11,7 +11,7 @@ api_hash = config["telegram"]["api_hash"]
 
 bot = Client('self_destruct_saver', api_id=api_id, api_hash=api_hash)
 
-@bot.on_message(filters.private & (filters.photo | filters.video | filters.video_note))
+@bot.on_message(filters.private & (filters.photo | filters.video | filters.video_note | filters.voice))
 async def save_media(client: Client, message: Message):
     file_path = await message.download()
     caption = message.caption if message.caption else ""
@@ -22,6 +22,8 @@ async def save_media(client: Client, message: Message):
         await client.send_video("me", file_path, caption=caption)
     elif message.video_note and message.video_note.ttl_seconds:
         await client.send_video("me", file_path)
+    elif message.voice and message.voice.ttl_seconds:
+        await client.send_voice("me", file_path)
 
     os.remove(file_path)
 
