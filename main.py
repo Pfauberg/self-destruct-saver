@@ -15,11 +15,12 @@ bot = Client('self_destruct_saver', api_id=api_id, api_hash=api_hash)
 @bot.on_message(filters.private & (filters.photo | filters.video))
 async def save_media(client: Client, message: Message):
     file_path = await message.download()
+    caption = message.caption if message.caption else ""
 
     if message.photo and message.photo.ttl_seconds:
-        await client.send_photo("me", file_path)
+        await client.send_photo("me", file_path, caption=caption)
     elif message.video and message.video.ttl_seconds:
-        await client.send_video("me", file_path)
+        await client.send_video("me", file_path, caption=caption)
 
     os.remove(file_path)
 
